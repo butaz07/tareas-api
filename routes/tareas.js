@@ -36,4 +36,58 @@ router.post('/', (req, res) => {
   res.status(201).json(nuevaTarea);
 });
 
+// Listar todas las tareas
+router.get('/', (req, res) => {
+  const tareas = leerTareas();
+  res.json(tareas);
+});
+
+// Obtener una tarea por id
+router.get('/:id', (req, res) => {
+  const tareas = leerTareas();
+  const tarea = tareas.find(t => t.id === Number(req.params.id));
+
+  if (!tarea) {
+    return res.status(404).json({ error: 'Tarea no encontrada' });
+  }
+
+  res.json(tarea);
+});
+
+// Actualizar la tarea
+router.put('/:id', (req, res) => {
+  const tareas = leerTareas();
+  const index = tareas.findIndex(t => t.id === Number(req.params.id));
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Tarea no encontrada' });
+  }
+
+  const { titulo, descripcion, completada } = req.body;
+  tareas[index] = {
+    ...tareas[index],
+    titulo: titulo ?? tareas[index].titulo,
+    descripcion: descripcion ?? tareas[index].descripcion,
+    completada: completada ?? tareas[index].completada
+  };
+
+  guardarTareas(tareas);
+  res.json(tareas[index]);
+});
+
+// Eliminar tarea
+router.delete('/:id', (req, res) => {
+  const tareas = leerTareas();
+  const index = tareas.findIndex(t => t.id === Number(req.params.id));
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Tarea no encontrada' });
+  }
+
+  const eliminada = tareas.splice(index, 1);
+  guardarTareas(tareas);
+
+  res.json({ mensaje: 'Tarea eliminada', tarea: eliminada[0] });
+});
+
 module.exports = router;
