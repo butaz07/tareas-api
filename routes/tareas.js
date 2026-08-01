@@ -14,7 +14,7 @@ function guardarTareas(tareas) {
   fs.writeFileSync(dbPath, JSON.stringify(tareas, null, 2));
 }
 
-// Crear la tarea
+// Crear tarea
 router.post('/', (req, res) => {
   const { titulo, descripcion } = req.body;
   if (!titulo) {
