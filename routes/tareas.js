@@ -54,4 +54,25 @@ router.get('/:id', (req, res) => {
   res.json(tarea);
 });
 
+// Actualizar la tarea
+router.put('/:id', (req, res) => {
+  const tareas = leerTareas();
+  const index = tareas.findIndex(t => t.id === Number(req.params.id));
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Tarea no encontrada' });
+  }
+
+  const { titulo, descripcion, completada } = req.body;
+  tareas[index] = {
+    ...tareas[index],
+    titulo: titulo ?? tareas[index].titulo,
+    descripcion: descripcion ?? tareas[index].descripcion,
+    completada: completada ?? tareas[index].completada
+  };
+
+  guardarTareas(tareas);
+  res.json(tareas[index]);
+});
+
 module.exports = router;
